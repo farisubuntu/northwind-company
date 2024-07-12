@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Install the latest version of Prisma Client and Accelerate Prisma Client extension
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```shell
+$ npm install @prisma/client@latest @prisma/extension-accelerate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Generate Prisma Client for Accelerate (`Serverless | Edge | Long-running`)
+`Serverless` selected
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```shell
+npx prisma generate --no-engine
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Extend your Prisma Client instance to add the Accelerate extension
 
-## Learn More
+```shell
+import { PrismaClient } from '@prisma/client/edge'
+import { withAccelerate } from '@prisma/extension-accelerate'
 
-To learn more about Next.js, take a look at the following resources:
+const prisma = new PrismaClient().$extends(withAccelerate())
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+Add caching to your Accelerate queries
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```ts
+await prisma.user.findMany({ 
+  where: { 
+    email: { 
+      contains: "alice@prisma.io",
+    },
+  },
+  cacheStrategy: { ttl: 60 },
+});
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Once you have added Accelerate to your application you can view your project usage in the [insights tab.](https://console.prisma.io/clyijemoe0bpnwm3j8cplo502/clyijgxpn0bprwm3jvzj84fop/clyijgxpo0bpswm3jevopnibl/accelerate/insights)
+
+To learn more about `cacheStrategy` and how Accelerate works, [see documentation](https://www.prisma.io/docs/data-platform/accelerate/concepts).
+
+---
+
+
+for setting `postresql`:
+
+[https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql-linux/](https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql-linux/)
